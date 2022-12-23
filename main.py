@@ -1,7 +1,6 @@
 # Setting up virtual environment and installing Hugging Face's Transformers
 '''
     Commands:
-    pip3 install torch - Install PyTorch
     python3 -m venv .env # run in your project directory
     source .env/bin/activate
     pip3 install transformers
