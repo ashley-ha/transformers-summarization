@@ -8,15 +8,47 @@
     python3 -c "from transformers import pipeline; print(pipeline('sentiment-analysis')('we love you'))" # Test if installed correctly
     For more information: https://huggingface.co/docs/transformers/installation
 
-'''
-from transformers import pipeline
+    Commands for YELP API connection:
+    pip3 install yelpapi
 
-# Load the summarization pipeline
+'''
+
+from transformers import pipeline
+from yelpapi import YelpAPI
+
+# Initialize the Yelp API client with your API key
+business_ids = []
+API_KEY = 'your API Key here'
+# Yelp API client
+client = YelpAPI('API_KEY')
+
+# Search for five businesses
+response = client.search_query(term='food', location='Oakland, CA', limit = 20)
+
+# Get the review text for each business
+for business in response['businesses']:
+    business_ids.append(business['id'])
+
+
+reviews = []
+# Get the reviews for a specific business
+response = client.reviews_query(id='IZ5ya4olYUc19-EIWRCyuQ')
+
+# Append the review text for each review to the list
+for review in response['reviews']:
+    reviews.append(review['text'])
+# Join the reviews into a single string
+review_text = ' '.join(reviews)
+
+
+# # Load the summarization pipeline
 summarization_pipeline = pipeline("summarization")
 
-# Use the pipeline to summarize a piece of text
-medical_summary = summarization_pipeline("The symptoms of a stroke often appear without warning. Some of the main symptoms include: confusion, including difficulty speaking and understanding speech, a headache, possibly with altered consciousness or vomiting numbness or an inability to move parts of the face, arm, or leg, particularly on one side of the body vision problems in one or both eyes difficulty walking, including dizziness and a lack of coordination Stroke can lead to long-term health problems. Depending on the speed of the diagnosis and treatment, a person can experience temporary or permanent disabilities after a stroke. Some people may also experience: bladder or bowel control problems, depression, paralysis or weakness on one or both sides of the body, difficulty controlling or expressing their emotions Symptoms vary and may range in severity. Learning the acronym “FAST” is a good way to remember the symptoms of stroke. This can help a person seek prompt treatment. FAST stands for: Face drooping: If the person tries to smile, does one side of their face droop? Arm weakness: If the person tries to raise both their arms, does one arm drift downward? Speech difficulty: If the person tries to repeat a simple phrase, is their speech slurred or unusual? Time to act: If any of these symptoms are occurring, contact the emergency services immediately. The outcome depends on how quickly someone receives treatment. Prompt care also means that they would be less likely to experience permanent brain damage or death.", max_length=75)
+# # # Use the pipeline to summarize a piece of text
+yelp_summary = summarization_pipeline(review_text, max_length=60)
 
-print(medical_summary)
+print(yelp_summary)
 
-output = {'summary_text': ' The symptoms of a stroke often appear without warning . Learning the acronym ‘FAST’ is a good way to remember the symptoms of stroke . Stroke can lead to long-term health problems, including bladder or bowel problems . Some people may also experience: bladder problems, depression, paralysis on one or both sides of the body .'}
+#output = [{'summary_text': ' Azit offers up a selection of Korean cuisine such as fried chicken, large casserole stews, pancakes and appetizers .
+#  The Korean food was unexpectedly amazing,
+# and I loved and would recommend everything we ordered. Azit is such a good place for a late night drunchie'}]
